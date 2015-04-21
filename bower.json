@@ -1,0 +1,20 @@
+{
+  "name": "SVHub",
+  "version": "0.0.0",
+  "homepage": "https://github.com/SVHub/SVHub",
+  "authors": [
+    "Martin Stein <martin.stein@uni-siegen.de>"
+  ],
+  "description": "Awesome",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "admin-lte": "~2.0.5"
+  }
+}
