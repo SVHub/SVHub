@@ -4,7 +4,7 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
   var userService = this;
 
   this.current = {};
-  
+
   this.register = function (options) {
     var user = new Parse.User();
     user.set("username", options.email);
@@ -24,7 +24,22 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
       },
       error: function(user, error) {
         // Show the error message somewhere and let the user try again.
-        alert("Error: " + error.code + " " + error.message);
+        console.error("Error: " + error.code + " " + error.message);
+      }
+    });
+  };
+
+  this.login = function (userInfo) {
+    console.log('login', userInfo);
+    Parse.User.logIn(userInfo.email, userInfo.pw, {
+      success: function(user) {
+        // Do stuff after successful login.
+        console.log('GREAT success!', user);
+        userService.current = user;
+      },
+      error: function(user, error) {
+        // The login failed. Check error to see why.
+        console.error('loginerror', user, error);
       }
     });
   };

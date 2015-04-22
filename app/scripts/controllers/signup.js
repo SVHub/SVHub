@@ -8,6 +8,6 @@
  * Controller of the svhubApp
  */
 angular.module('svhubApp')
-  .controller('SignupCtrl', function ($scope, User) {
+  .controller('SignupCtrl', function ($scope) {
     // $scope.msg = 'hello';    
   });

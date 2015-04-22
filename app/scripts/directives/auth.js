@@ -1,4 +1,4 @@
-angular.module('svhubApp').directive('auth', function() {
+angular.module('svhubApp').directive('auth', function(User) {
   return {
     restrict: 'E',
     scope: { 
@@ -18,7 +18,7 @@ angular.module('svhubApp').directive('auth', function() {
       scope.pwconfirm = '';
 
       scope.auth = function () {
-        if (scope.type === 'login') {
+        if (scope.formType === 'login') {
           scope.login();
         } else {
           scope.register();
