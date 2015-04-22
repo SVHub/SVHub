@@ -12,7 +12,10 @@
     "angular-animate": "1.2.16",
     "angular-touch": "1.2.16",
     "angular-route": "1.2.16",
-    "admin-lte": "~2.0.5"
+    "admin-lte": "~2.0.5",
+    "fontawesome": "~4.3.0",
+    "parse-js-sdk": "~1.4.0",
+    "parse-angular-patch": "~0.1.2"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",
