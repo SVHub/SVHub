@@ -15,14 +15,16 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'ui.bootstrap'
   ])
   .config(function ($routeProvider) {
     Parse.initialize("UfPEiaABWyAhkthWHZgEuXWIJan06UqV1B8zFXxV", "N0rlSL6NYn5zH2pf0ANECGM1KQSciZZImxaVqSYE");
 
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
+        // templateUrl: 'views/main.html',
+        templateUrl: 'views/list.html',
         controller: 'MainCtrl'
       })
       .when('/register', {
@@ -32,6 +34,10 @@ angular
       .when('/login', {
         templateUrl: 'views/login.html',
         controller: 'SignupCtrl'
+      })
+      .when('/newconference', {
+        templateUrl: 'views/new-conference.html',
+        controller: 'NewConferenceCtrl'
       })
       .otherwise({
         redirectTo: '/'
