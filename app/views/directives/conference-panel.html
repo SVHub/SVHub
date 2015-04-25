@@ -1,11 +1,13 @@
-<div class="panel panel-primary conference-panel">
-  <div class="panel-heading">
-    <!-- <p>{{conference}}</p> -->
-    <h3 class="panel-title ng-binding" title="{{conference.get('conf_name')}}">{{conference.get('conf_name')}}</h3>
+<a ng-href="#/conference/{{conference.id}}/enroll">
+  <div class="panel panel-primary conference-panel">
+    <div class="panel-heading">
+      <!-- <p>{{conference}}</p> -->
+      <h3 class="panel-title ng-binding" title="{{conference.get('conf_name')}}">{{conference.get('conf_name')}}</h3>
+    </div>
+    <div class="panel-body">
+      <!-- <p>{{conference.get('conf_img_url') | decode}}</p> -->
+      <img ng-src="{{conference.get('conf_img_url') | decode}}" alt="" class="conf-panel-content">
+    </div>
+    <div class="panel-footer">{{conference.get('conf_start') | date:'MMMM dd'}} - {{conference.get('conf_end') | date:'MMMM dd'}}</div>
   </div>
-  <div class="panel-body">
-    <!-- <p>{{conference.get('conf_img_url') | decode}}</p> -->
-    <img ng-src="{{conference.get('conf_img_url') | decode}}" alt="" >
-  </div>
-  <div class="panel-footer">{{conference.get('conf_start') | date:'MMMM dd'}} - {{conference.get('conf_end') | date:'MMMM dd'}}</div>
-</div>
+</a>

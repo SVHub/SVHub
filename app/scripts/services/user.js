@@ -1,9 +1,13 @@
 'use strict';
-angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies) {
+angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies, $location) {
 
   var userService = this;
 
   this.current = {};
+
+  if (Parse.User.current()) {
+    this.current = Parse.User.current();
+  }
 
   this.register = function (options) {
     var user = new Parse.User();
@@ -20,6 +24,10 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
       success: function(user) {
         console.log('BOO-YOW!', user);
         userService.current = user;
+        $rootScope.$apply(function() {
+          console.log('redirecting to', options.then);
+          $location.path(options.then);
+        });
         // Hooray! Let them use the app now.
       },
       error: function(user, error) {
@@ -36,6 +44,10 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
         // Do stuff after successful login.
         console.log('GREAT success!', user);
         userService.current = user;
+        $rootScope.$apply(function() {
+          console.log('redirecting to', userInfo.then);
+          $location.path(userInfo.then);
+        });
       },
       error: function(user, error) {
         // The login failed. Check error to see why.
@@ -44,7 +56,7 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
     });
   };
 
-  this.fbLogin = function () {
+  this.fbLogin = function (options) {
     Parse.FacebookUtils.logIn(null, {
       success: function(user) {
         if (!user.existed()) {
@@ -53,6 +65,10 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
           console.log("User logged in through Facebook!", user);
         }
         userService.current = user;
+        $rootScope.$apply(function() {
+          console.log('redirecting to', options.then);
+          $location.path(options.then);
+        });
       },
       error: function(user, error) {
         console.log("User cancelled the Facebook login or did not fully authorize.");
@@ -60,5 +76,15 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
     });
   };
 
+  this.logout = function () {
+    Parse.User.logOut();
+  };
+
+  this.loggedIn = function () {
+    if (Parse.User.current()) {
+      return true;
+    }
+    return false;
+  };
 
 });

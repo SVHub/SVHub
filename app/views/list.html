@@ -1,6 +1,20 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-12">
+      <a ng-href="#/newconference">
+        <div class="panel panel-primary conference-panel">
+          <div class="panel-heading">
+            <h3 class="panel-title ng-binding" title="Add your Conference">Your conference</h3>
+          </div>
+          <div class="panel-body">
+            <div class="conf-panel-content">
+              <i class="fa fa-plus"></i>
+              <p>Manage your conference's student volunteers with SVHub</p>
+            </div>
+          </div>
+          <div class="panel-footer">Click here to get started!</div>
+        </div>
+      </a>
       <conference-panel ng-repeat="conference in conferences" conference="conference"></conference-panel>
     </div>
     <!-- <div class="col-md-4">

@@ -11,12 +11,24 @@
 .conference-panel {
   width: 250px;
   display: inline-block;
-  height: 280px;
+  height: 261px;
   margin-right: 50px;
   margin-bottom: 50px;
 }
 
-.conference-panel img {
+.conference-panel .conf-panel-content {
   width: 225px;
   height: 150px;
+}
+
+.conference-panel .conf-panel-content {
+  text-align: center;
+}
+
+.conference-panel .conf-panel-content i {
+  font-size: 124px;
+}
+
+input:invalid {
+  box-shadow: 0 0 5px 1px red;
 }
