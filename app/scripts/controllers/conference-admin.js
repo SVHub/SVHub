@@ -18,6 +18,7 @@ angular.module('svhubApp')
         // console.log(conferenceResults[0].get('conf_name'));
         $scope.conference = conferenceResults[0];
         $scope.pendingConference.name = $scope.conference.get('conf_name');
+        $scope.pendingConference.id = $scope.conference.get('id');
         $scope.pendingConference.year = $scope.conference.get('conf_year');
         $scope.pendingConference.start = $scope.conference.get('conf_start');
         $scope.pendingConference.end = $scope.conference.get('conf_end');

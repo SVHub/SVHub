@@ -52,12 +52,21 @@ angular.module('svhubApp').directive('auth', function(User) {
 
       scope.isValid = function () {
         if (scope.formType === 'login') {
-          console.log('validity:', scope.userInfo.email.length > 0 && scope.userInfo.pw.length > 0);
-          return scope.userInfo.email.length > 0 && scope.userInfo.pw.length > 0;
+          return scope.hasOwnProperty('userInfo')
+            && scope.userInfo.hasOwnProperty('email')
+            && scope.userInfo.email
+            && scope.userInfo.email.length > 0 
+            && scope.userInfo.hasOwnProperty('pw')
+            && scope.userInfo.pw.length > 0;
         } else {
-          return scope.userInfo.fullname.length > 0 
+          return scope.hasOwnProperty('userInfo')
+            && scope.userInfo.hasOwnProperty('fullname')
+            && scope.userInfo.fullname.length > 0 
+            && scope.userInfo.hasOwnProperty('email')
             && scope.userInfo.email && scope.userInfo.email.length > 0 
+            && scope.userInfo.hasOwnProperty('pw')
             && scope.userInfo.pw.length > 0
+            && scope.userInfo.hasOwnProperty('pwconfirm')
             && scope.userInfo.pwconfirm === scope.userInfo.pw;
         }
       };

@@ -83,6 +83,8 @@ angular
         controller: 'EnrollmentCtrl',
         resolve: requireAuthentication()
       })
+      // .when('/conference/:id/', { //conference home for ... everyone? regular svs?
+      // })
       .when('/conference/:id/admin', {
         templateUrl: 'views/conference-admin.html',
         controller: 'ConferenceAdminCtrl',

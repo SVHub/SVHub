@@ -1,6 +1,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-9">
+      <a ng-href="#/conference{{pendingConference.id}}/enroll">Enrollment Link for {{pendingConference.name}} {{pendingConference.year}} <i class="fa fa-share-square"></i></a>
       <form ng-submit="update()">
         <div class="form-group">
           <label for="svCount">Number of SVs (including all positions, even chairs)</label>

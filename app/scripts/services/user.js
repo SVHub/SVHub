@@ -1,9 +1,11 @@
 'use strict';
-angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies, $location) {
+angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies, $location, $q) {
 
   var userService = this;
 
   this.current = {};
+  // this.current
+  this.enrollments = [];
 
   if (Parse.User.current()) {
     this.current = Parse.User.current();
@@ -56,6 +58,39 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
     });
   };
 
+  $rootScope.$on('enrolled', function (evt, enrollments) {
+    console.log("$on enrolled", enrollments);
+    userService.enrollments = enrollments;
+  });
+
+  this.getConferences = function () {
+    var deferred = $q.defer();
+    if (this.enrollments.length > 0) {
+      deferred.resolve(this.enrollments);
+    } else {
+      var enrollmentQuery = new Parse.Query("Enrollment");
+      enrollmentQuery.equalTo('user', Parse.User.current());
+      enrollmentQuery.include('role');
+      enrollmentQuery.include('user');
+      enrollmentQuery.include('conference');
+      enrollmentQuery.find({
+        success: function(enrollments) {
+          console.log('got enrollments from sever for user', enrollments);
+          userService.enrollments = enrollments;
+          deferred.resolve(enrollments);
+        },
+        error: function(object, error) {
+          // The object was not retrieved successfully.
+          // error is a Parse.Error with an error code and message.
+          var errorMessage = 'did not get enrollments from sever for user';
+          console.error(errorMessage);
+          deferred.reject(errorMessage)
+        }
+      });
+    }
+    return deferred.promise;
+  };
+
   this.fbLogin = function (options) {
     Parse.FacebookUtils.logIn(null, {
       success: function(user) {
@@ -74,6 +109,12 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
         console.log("User cancelled the Facebook login or did not fully authorize.");
       }
     });
+  };
+
+  this.selectEnrollment = function (idx) {
+    console.log('selectedEnrollment');
+    console.log(this.enrollments.length, this.enrollments[idx].get('conference').get('conf_name'), this.enrollments[idx].get('conference').get('conf_year'));
+    this.selectedEnrollment = this.enrollments[idx];
   };
 
   this.logout = function () {

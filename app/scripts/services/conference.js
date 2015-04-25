@@ -87,7 +87,7 @@ angular.module('svhubApp').service('Conference', function ($rootScope, $http, $c
   this.addConference = function (conference) {
     var deferred = $q.defer();
     var Conference = Parse.Object.extend("Conference");
-    var ConferenceUserRole = Parse.Object.extend("ConferenceUserRole");
+    var Enrollment = Parse.Object.extend("Enrollment");
     
     var newConf = new Conference();
 
@@ -104,17 +104,17 @@ angular.module('svhubApp').service('Conference', function ($rootScope, $http, $c
           console.log('saved conf');
            // Execute any logic that should take place after the object is saved.
            // alert('New object created with objectId: ' + conference.id);
-           var newConfUserRole = new ConferenceUserRole();
-           newConfUserRole.set('conference', conference);
-           newConfUserRole.set('user', Parse.User.current());
-           newConfUserRole.set('role', adminRole);
-           newConfUserRole.save(null, {
-            success: function (newConfUserRole) {
-              console.log('saved newConfUserRole');
+           var newEnrollment = new Enrollment();
+           newEnrollment.set('conference', conference);
+           newEnrollment.set('user', Parse.User.current());
+           newEnrollment.set('role', adminRole);
+           newEnrollment.save(null, {
+            success: function (newEnrollment) {
+              console.log('saved newEnrollment');
               deferred.resolve(conference);
             },
-            error: function (newConfUserRole, error) {
-              console.error('error saving newConfUserRole', error);
+            error: function (newEnrollment, error) {
+              console.error('error saving newEnrollment', error);
               deferred.reject(error);
             }
            });
@@ -165,11 +165,16 @@ angular.module('svhubApp').service('Conference', function ($rootScope, $http, $c
       success: function (enrollment) {
         console.log('success enrolling')
         var enrollmentsQuery = new Parse.Query(Enrollment);
+        enrollmentsQuery.equalTo('user', Parse.User.current());
+        enrollmentsQuery.include('role');
         enrollmentsQuery.include('user');
+        enrollmentsQuery.include('conference');
+        // enrollmentsQuery.include('user');
         enrollmentsQuery.find({
           success: function(enrollments) {
             console.log('got enrollments from sever', enrollments);
             console.log(enrollments[0]);
+            $rootScope.$emit('enrolled', enrollments);
             // deferred.resolve(enrollments);
           },
           error: function(object, error) {
