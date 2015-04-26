@@ -32,3 +32,8 @@
 input:invalid {
   box-shadow: 0 0 5px 1px red;
 }
+
+.navbar-brand img {
+  height: 50px;
+  margin-top: -15px;
+}
