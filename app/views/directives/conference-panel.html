@@ -1,8 +1,8 @@
-<a ng-href="#/conference/{{conference.id}}/enroll">
+<a ng-href="#/conference/{{conference.get('conf_name')+conference.get('conf_year')}}/enroll">
   <div class="panel panel-primary conference-panel">
     <div class="panel-heading">
       <!-- <p>{{conference}}</p> -->
-      <h3 class="panel-title ng-binding" title="{{conference.get('conf_name')}}">{{conference.get('conf_name')}}</h3>
+      <h3 class="panel-title ng-binding" title="{{conference.get('conf_name')}} {{conference.get('conf_year')}}">{{conference.get('conf_name')}} {{conference.get('conf_year')}}</h3>
     </div>
     <div class="panel-body">
       <!-- <p>{{conference.get('conf_img_url') | decode}}</p> -->

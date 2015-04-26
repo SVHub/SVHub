@@ -47,7 +47,7 @@ angular.module('svhubApp').service('Conference', function ($rootScope, $http, $c
     var deferred = $q.defer();
     this.getConferences().then(function (conferences) {
       deferred.resolve(conferences.filter(function (conference) {
-        return conference.id == id;
+        return conference.get('conf_name')+conference.get('conf_year') == id;
       }));
     });
     return deferred.promise;

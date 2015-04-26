@@ -29,7 +29,7 @@ angular.module('svhubApp')
       Conference.addConference($scope.conference)
         .then(function (conference) {
           // $scope.$apply(function () {
-            $location.path('/conference/' + conference.id + '/admin');
+            $location.path('/conference/' + conference.get('conf_name')+conference.get('conf_year') + '/admin');
           // });
         });
       

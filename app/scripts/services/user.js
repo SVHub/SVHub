@@ -77,6 +77,9 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
         success: function(enrollments) {
           console.log('got enrollments from sever for user', enrollments);
           userService.enrollments = enrollments;
+          if (enrollments.length > 0) {
+            userService.selectEnrollment(0);
+          }
           deferred.resolve(enrollments);
         },
         error: function(object, error) {
