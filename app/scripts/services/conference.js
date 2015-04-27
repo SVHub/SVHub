@@ -13,14 +13,14 @@ angular.module('svhubApp').service('Conference', function ($rootScope, $http, $c
     var query = new Parse.Query(conferences);
     query.find({
       success: function(conferences) {
-        console.log('got conferences from sever', conferences);
+        console.log('got conferences from server', conferences);
         console.log(conferences[0]);
         deferred.resolve(conferences);
       },
       error: function(object, error) {
         // The object was not retrieved successfully.
         // error is a Parse.Error with an error code and message.
-        var errorMessage = 'did not get conferences from sever';
+        var errorMessage = 'did not get conferences from server';
         console.error(errorMessage);
         deferred.reject(errorMessage)
       }
@@ -156,40 +156,166 @@ angular.module('svhubApp').service('Conference', function ($rootScope, $http, $c
     return deferred.promise;
   };
 
+  function fetchUserEnrollments () {
+    var deferred = $q.defer();
+    var Enrollment = Parse.Object.extend("Enrollment");
+    var enrollmentsQuery = new Parse.Query(Enrollment);
+    enrollmentsQuery.equalTo('user', Parse.User.current());
+    enrollmentsQuery.include('role');
+    enrollmentsQuery.include('user');
+    enrollmentsQuery.include('conference');
+    enrollmentsQuery.find({
+      success: function(enrollments) {
+        console.log('got enrollments from server', enrollments);
+        console.log(enrollments[0]);
+        $rootScope.$emit('enrolled', enrollments);
+        deferred.resolve(enrollments);
+      },
+      error: function(object, error) {
+        var errorMessage = 'did not get enrollments from server';
+        console.error(errorMessage);
+        deferred.reject(errorMessage);
+      }
+    });
+    return deferred.promise;
+  }
+
+  this.unenroll = function (enrollment) {
+    var deferred = $q.defer();
+    var EnrollmentStatus = Parse.Object.extend("EnrollmentStatus");
+    var enrollmentStatusQuery = new Parse.Query(EnrollmentStatus);
+    var UNENROLLED_STATUS = 'unenrolled';
+    enrollmentStatusQuery.equalTo('name', UNENROLLED_STATUS);
+    enrollmentStatusQuery.find({
+      success: function(enrollmentStatuses) {
+        if (enrollmentStatuses.length > 0) {
+          enrollment.set('status', enrollmentStatuses[0]);
+          enrollment.save(null, {
+            success: function (enrollment) {
+              fetchUserEnrollments().then(function (enrollments) {
+                deferred.resolve(enrollment);
+              });
+            }, 
+            error: function (obj, err) {
+              console.error('error saving unrolled status to enrollment', err);
+              deferred.reject('error saving unrolled status to enrollment');
+            }
+          });
+        } else {
+          deferred.reject('status of', UNENROLLED_STATUS, 'not found');
+        }
+      },
+      error: function(object, error) {
+        console.error('error searching for status of', UNENROLLED_STATUS, error);
+        deferred.reject('error searching for status of', UNENROLLED_STATUS);
+      }
+    });
+    return deferred.promise;
+  };
+
   this.enroll = function (conference) {
+    var deferred = $q.defer();
     var Enrollment = Parse.Object.extend("Enrollment");
     var e = new Enrollment();
     e.set('user', Parse.User.current());
     e.set('conference', conference);
-    e.save(null, {
-      success: function (enrollment) {
-        console.log('success enrolling')
-        var enrollmentsQuery = new Parse.Query(Enrollment);
-        enrollmentsQuery.equalTo('user', Parse.User.current());
-        enrollmentsQuery.include('role');
-        enrollmentsQuery.include('user');
-        enrollmentsQuery.include('conference');
-        // enrollmentsQuery.include('user');
-        enrollmentsQuery.find({
-          success: function(enrollments) {
-            console.log('got enrollments from sever', enrollments);
-            console.log(enrollments[0]);
-            $rootScope.$emit('enrolled', enrollments);
-            // deferred.resolve(enrollments);
-          },
-          error: function(object, error) {
-            // The object was not retrieved successfully.
-            // error is a Parse.Error with an error code and message.
-            var errorMessage = 'did not get enrollments from sever';
-            console.error(errorMessage);
-            // deferred.reject(errorMessage)
-          }
-        });
-      },
-      error: function (enrollment, error) {
-        console.error('error enrolling, please try again');
+    var EnrollmentStatus = Parse.Object.extend("EnrollmentStatus");
+    var enrollmentStatusQuery = new Parse.Query(EnrollmentStatus);
+    var ENROLLED_STATUS = 'enrolled';
+    enrollmentStatusQuery.equalTo('name', ENROLLED_STATUS);
+    enrollmentStatusQuery.find({
+      success: function(enrollmentStatuses) {
+        console.log('success grabbing enrollment status for enrolling', enrollmentStatuses);
+        if (enrollmentStatuses.length > 0) {
+          e.set('status', enrollmentStatuses[0]);
+          e.save(null, {
+            success: function (enrollment) {
+              console.log('success enrolling')
+              fetchUserEnrollments().then(function (enrollments) {
+                deferred.resolve(enrollments);
+              });
+            },
+            error: function (enrollment, error) {
+              console.error('error enrolling, please try again', error);
+              deferred.reject('error enrolling, please try again');
+            }
+          });
+        } else {
+          console.error('error enrolling, please try again', "didn't find enroll status");
+          deferred.reject('error enrolling, please try again');
+        }
+      }, 
+      error: function (obj, err) {
+        console.error('error enrolling, please try again', err);
+        deferred.reject('error enrolling, please try again');
       }
     });
+    return deferred.promise;
+  };
+
+  function getEnrollStatus () {
+    var deferred = $q.defer();
+    var EnrollmentStatus = Parse.Object.extend("EnrollmentStatus");
+    var enrollmentStatusQuery = new Parse.Query(EnrollmentStatus);
+    var ENROLLED_STATUS = 'enrolled';
+    enrollmentStatusQuery.equalTo('name', ENROLLED_STATUS);
+    enrollmentStatusQuery.find({
+      success: function(enrollmentStatuses) {
+        if (enrollmentStatuses.length > 0) {
+          deferred.resolve(enrollmentStatuses[0]);
+        } else {
+          deferred.reject("didn't find enrollment status");
+        }
+      },
+      error: function (obj, err) {
+        deferred.reject('error getting enrollment status', err);
+      }
+    });
+    return deferred.promise;
+  }
+
+  this.reEnroll = function (enrollment) {
+    var deferred = $q.defer();
+    getEnrollStatus().then(function (status) {
+      enrollment.set('status', status);
+      enrollment.save(null, {
+        success: function(savedEnrollment) {
+          deferred.resolve(savedEnrollment);
+        },
+        error: function (obj, err) {
+          deferred.reject('error reenrolling', err);
+        }
+      });
+    });
+    return deferred.promise;
+  };
+
+  function fetchConferenceEnrollments (conference) {
+    var deferred = $q.defer();
+    var Enrollment = Parse.Object.extend("Enrollment");
+    var enrollmentsQuery = new Parse.Query(Enrollment);
+    // enrollmentsQuery.equalTo('user', Parse.User.current());
+    enrollmentsQuery.equalTo('conference', conference);
+    enrollmentsQuery.include('role');
+    enrollmentsQuery.include('user');
+    enrollmentsQuery.include('conference');
+    enrollmentsQuery.include('status');
+    enrollmentsQuery.find({
+      success: function(enrollments) {
+        console.log('got enrollments from server', enrollments);
+        deferred.resolve(enrollments);
+      },
+      error: function(object, error) {
+        var errorMessage = 'did not get enrollments from server';
+        console.error(errorMessage);
+        deferred.reject(errorMessage);
+      }
+    });
+    return deferred.promise;
+  }
+
+  this.getConferenceEnrollments = function (conference) {
+    return fetchConferenceEnrollments(conference);
   };
 
 });

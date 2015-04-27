@@ -37,3 +37,7 @@ input:invalid {
   height: 50px;
   margin-top: -15px;
 }
+
+.svhub .ng-table th {
+  text-align: left;
+}

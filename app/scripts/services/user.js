@@ -73,6 +73,7 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
       enrollmentQuery.include('role');
       enrollmentQuery.include('user');
       enrollmentQuery.include('conference');
+      enrollmentQuery.include('status');
       enrollmentQuery.find({
         success: function(enrollments) {
           console.log('got enrollments from sever for user', enrollments);
@@ -91,6 +92,23 @@ angular.module('svhubApp').service('User', function ($rootScope, $http, $cookies
         }
       });
     }
+    return deferred.promise;
+  };
+
+  this.getEnrollment = function (nameyear) {
+    var deferred = $q.defer();
+    this.getConferences().then(function (enrollments) {
+      var theEnrollment = enrollments.filter(function (enrollment) {
+        console.log(nameyear);
+        console.log(enrollment.get('conference').get('conf_name')+enrollment.get('conference').get('conf_year'));
+        return enrollment.get('conference').get('conf_name')+enrollment.get('conference').get('conf_year') === nameyear;
+      });
+      if (theEnrollment.length > 0) {
+        deferred.resolve(theEnrollment[0]);
+      } else {
+        deferred.reject('no matching enrollments');
+      }
+    });
     return deferred.promise;
   };
 

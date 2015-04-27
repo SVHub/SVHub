@@ -17,7 +17,8 @@ angular
     'ngSanitize',
     'ngTouch',
     'ui.bootstrap',
-    'textAngular'
+    'textAngular',
+    'ngTable'
   ])
   .config(function ($routeProvider, $provide) {
     Parse.initialize("UfPEiaABWyAhkthWHZgEuXWIJan06UqV1B8zFXxV", "N0rlSL6NYn5zH2pf0ANECGM1KQSciZZImxaVqSYE");
@@ -81,6 +82,11 @@ angular
       .when('/conference/:id/enroll', {
         templateUrl: 'views/enroll.html',
         controller: 'EnrollmentCtrl',
+        resolve: requireAuthentication()
+      })
+      .when('/conference/:id/people', {
+        templateUrl: 'views/people.html',
+        controller: 'PeopleCtrl',
         resolve: requireAuthentication()
       })
       // .when('/conference/:id/', { //conference home for ... everyone? regular svs?

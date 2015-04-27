@@ -1,0 +1,13 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <table ng-table="tableParams" class="table">
+        <tr ng-repeat="enrollment in $data">
+          <td data-title="'Name'" sortable="'fullname'">{{enrollment.get('user').get('fullname')}}</td>
+          <td data-title="'Email'" sortable="'email'">{{enrollment.get('user').get('email')}}</td>
+          <td data-title="'Status'" sortable="'status'">{{enrollment.get('status').get('name')}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
